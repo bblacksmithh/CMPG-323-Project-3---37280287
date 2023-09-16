@@ -1,7 +1,7 @@
 # CMPG-323-Project-3---37280287
 
 # Link to Web App
-(EcoPowerLogistics)[https://ecopowerlogistics20230916173634.azurewebsites.net]
+[EcoPowerLogistics](https://ecopowerlogistics20230916173634.azurewebsites.net)
 
 # SuperStore Web Application
 
