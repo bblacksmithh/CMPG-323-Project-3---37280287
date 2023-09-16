@@ -147,9 +147,9 @@ namespace Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private async Task<bool> ProductExistsAsync(int id)
         {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+            return await productRepository.ExistsAsync(id);
         }
     }
 }

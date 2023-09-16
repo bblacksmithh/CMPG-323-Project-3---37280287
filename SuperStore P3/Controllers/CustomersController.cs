@@ -8,15 +8,15 @@ namespace Controllers
     [Authorize]
     public class CustomersController : Controller
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly ICustomerRepository customerRepository;
         public CustomersController(ICustomerRepository customerRepository)
         {
-            _customerRepository = customerRepository;
+            this.customerRepository = customerRepository;
         }
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            var customers = await _customerRepository.GetAllAsync();
+            var customers = await customerRepository.GetAllAsync();
             return View(customers);
         }
         // GET: Customer/Details/5
@@ -27,7 +27,7 @@ namespace Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync(id.Value);
+            var customer = await customerRepository.GetByIdAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -49,7 +49,7 @@ namespace Controllers
         {
             if (ModelState.IsValid)
             {
-                await _customerRepository.AddAsync(customer);
+                await customerRepository.AddAsync(customer);
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -62,7 +62,7 @@ namespace Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync(id.Value);
+            var customer = await customerRepository.GetByIdAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -85,11 +85,11 @@ namespace Controllers
             {
                 try
                 {
-                    _customerRepository.Update(customer);
+                    customerRepository.Update(customer);
                 }
                 catch
                 {
-                    if (!_customerRepository.ExistsAsync(id).Result)
+                    if (!customerRepository.ExistsAsync(id).Result)
                     {
                         return NotFound();
                     }
@@ -110,7 +110,7 @@ namespace Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync(id.Value);
+            var customer = await customerRepository.GetByIdAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -123,7 +123,7 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerRepository.DeleteAsync(id);
+            await customerRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
