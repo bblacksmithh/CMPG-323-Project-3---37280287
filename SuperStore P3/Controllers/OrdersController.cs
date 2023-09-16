@@ -65,11 +65,9 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
-            if (ModelState.IsValid)
-            {
-                await orderRepository.AddAsync(order); // Use the repository to add the order
-                return RedirectToAction(nameof(Index));
-            }
+            await orderRepository.AddAsync(order); // Use the repository to add the order
+            return RedirectToAction(nameof(Index));
+
             ViewData["CustomerId"] = new SelectList(await orderRepository.GetAllAsync(), "CustomerId", "CustomerId", order.CustomerId);
             return View(order);
         }
@@ -104,26 +102,22 @@ namespace Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    await orderRepository.Update(order); // Use the repository to update the order asynchronously
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await orderRepository.ExistsAsync(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await orderRepository.Update(order); // Use the repository to update the order asynchronously
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await orderRepository.ExistsAsync(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+                return RedirectToAction(nameof(Index));
             ViewData["CustomerId"] = new SelectList(await orderRepository.GetAllAsync(), "CustomerId", "CustomerId", order.CustomerId);
             return View(order);
         }
