@@ -10,10 +10,16 @@ namespace EcoPower_Logistics.Repository
         {
 
         }
-
-        public Order GetAllOrders()
+        public async Task<List<Order>> GetAllOrdersAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Orders.Include(o => o.Customer).ToListAsync();
+        }
+
+        public async Task<Order> GetOrderDetailsAsync(int orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(m => m.OrderId == orderId);
         }
     }
 

@@ -27,21 +27,20 @@ namespace Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var results = orderRepository.GetAllOrders();
-            return View(results);
+            var orders = await orderRepository.GetAllOrdersAsync();
+            return View(orders);
         }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Orders == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .FirstOrDefaultAsync(m => m.OrderId == id);
+            var order = await orderRepository.GetOrderDetailsAsync(id.Value);
+
             if (order == null)
             {
                 return NotFound();
@@ -66,8 +65,7 @@ namespace Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
+                await orderRepository.AddAsync(order); // Use the repository to add the order
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
@@ -77,12 +75,13 @@ namespace Controllers
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Orders == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Orders.FindAsync(id);
+            var order = await orderRepository.GetByIdAsync(id.Value); // Use the repository to get the order by ID
+
             if (order == null)
             {
                 return NotFound();
@@ -107,12 +106,11 @@ namespace Controllers
             {
                 try
                 {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
+                    orderRepository.Update(order); // Use the repository to update the order
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.OrderId))
+                    if (!await orderRepository.ExistsAsync(id))
                     {
                         return NotFound();
                     }
@@ -130,14 +128,13 @@ namespace Controllers
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Orders == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .FirstOrDefaultAsync(m => m.OrderId == id);
+            var order = await orderRepository.GetByIdAsync(id.Value); // Use the repository to get the order by ID
+
             if (order == null)
             {
                 return NotFound();
@@ -151,23 +148,13 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Orders == null)
-            {
-                return Problem("Entity set 'SuperStoreContext.Orders'  is null.");
-            }
-            var order = await _context.Orders.FindAsync(id);
-            if (order != null)
-            {
-                _context.Orders.Remove(order);
-            }
-
-            await _context.SaveChangesAsync();
+            await orderRepository.DeleteAsync(id); // Use the repository to delete the order
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderExists(int id)
+        private async Task<bool> OrderExistsAsync(int id)
         {
-            return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
+            return await orderRepository.ExistsAsync(id);
         }
     }
 }

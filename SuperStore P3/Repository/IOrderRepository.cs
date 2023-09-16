@@ -4,6 +4,7 @@ namespace EcoPower_Logistics.Repository
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
-        Order GetAllOrders();
+        Task<List<Order>> GetAllOrdersAsync();
+        Task<Order> GetOrderDetailsAsync(int orderId);
     }
 }
