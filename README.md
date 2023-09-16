@@ -11,11 +11,6 @@ The SuperStore web application is a sample project that demonstrates the use of 
 
 - [Overview](#overview)
 - [Features](#features)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
