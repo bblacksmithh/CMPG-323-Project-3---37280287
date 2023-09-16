@@ -50,9 +50,11 @@ namespace Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
+            var customers = await orderRepository.GetAllAsync();
+
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
             return View();
         }
 
@@ -63,12 +65,10 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
-            if (ModelState.IsValid)
-            {
-                await orderRepository.AddAsync(order); // Use the repository to add the order
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
+            await orderRepository.AddAsync(order); // Use the repository to add the order
+            return RedirectToAction(nameof(Index));
+
+            ViewData["CustomerId"] = new SelectList(await orderRepository.GetAllAsync(), "CustomerId", "CustomerId", order.CustomerId);
             return View(order);
         }
 
@@ -86,7 +86,8 @@ namespace Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
+
+            ViewData["CustomerId"] = new SelectList(await orderRepository.GetAllAsync(), "CustomerId", "CustomerId", order.CustomerId);
             return View(order);
         }
 
@@ -101,30 +102,25 @@ namespace Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    orderRepository.Update(order); // Use the repository to update the order
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await orderRepository.ExistsAsync(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await orderRepository.Update(order); // Use the repository to update the order asynchronously
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await orderRepository.ExistsAsync(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+                return RedirectToAction(nameof(Index));
+            ViewData["CustomerId"] = new SelectList(await orderRepository.GetAllAsync(), "CustomerId", "CustomerId", order.CustomerId);
             return View(order);
         }
-
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

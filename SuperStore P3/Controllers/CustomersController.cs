@@ -85,7 +85,7 @@ namespace Controllers
             {
                 try
                 {
-                    customerRepository.Update(customer);
+                    await customerRepository.Update(customer);
                 }
                 catch
                 {
