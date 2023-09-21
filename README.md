@@ -33,3 +33,15 @@ The SuperStore web application is designed to manage customers, orders, and prod
 - **Orders Management**: Provides functionality to create, view, edit, and delete order records, including order details.
 
 - **Products Management**: Offers the ability to manage product information, including adding, viewing, editing, and deleting products.
+
+## How the Web App Works?
+- First, navigate to the website: [EcoPowerLogistics](https://ecopowerlogistics20230916173634.azurewebsites.net) then you will see the following:
+  ![](./image_2023-09-21_120701206.png)
+- Click on the register/login hyperlink located at the top right:
+  ![](./image_2023-09-21_121218110.png)
+- When you have successfully registered and logged in, you will see: Home, Customers, Orders, and Products tabs.
+  ![](./image_2023-09-21_121957890.png)
+- When you have clicked on one of the tabs, you will see a table related to the connected database.
+- You can create a new item in that particular table by clicking on create new hyperlink located at the top of the page.
+- You can also edit existing entries, by clicking edit to the right hand side of the entry and then editing the values in the edits.
+- You can also delete existing entries, by clicking on the delete button on the right hand side of the entries
